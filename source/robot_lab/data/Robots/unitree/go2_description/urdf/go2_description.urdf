@@ -1,10 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
 <robot name="go2_description">
   <link name="base">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.021112 0 -0.005366" rpy="0 0 0" />
       <mass value="6.921" />
       <inertia ixx="0.02448" ixy="0.00012166" ixz="0.0014849" iyy="0.098077" iyz="-3.12E-05" izz="0.107" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.021112 0 -0.005366" rpy="0 0 0" />
+      <mass value="14.140726" />
+      <inertia
+        ixx="0.271614"
+        ixy="-0.002090"
+        ixz="0.000622"
+        iyy="0.293116"
+        iyz="-0.008975"
+        izz="0.431329" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -12,10 +23,50 @@
         <mesh filename="package://go2_description/meshes/base.dae" />
       </geometry>
       <material name="深色橡胶_001-effect"><color rgba="0.6717055 0.6924257 0.7742702 1" /></material><material name="白色logo_001-effect"><color rgba="1 1 1 1" /></material><material name="黑色贴纸_007-effect"><color rgba="0.009018 0.009018 0.009018 1" /></material><material name="黑色金属_007-effect"><color rgba="0.01341 0.01341 0.01341 1" /></material><material name="黑色塑料_003-effect"><color rgba="0.023455 0.023455 0.023455 1" /></material></visual>
-    <collision>
+    <!--collision>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
         <box size="0.3762 0.0935 0.114" />
+      </geometry>
+    </collision-->
+    <collision name="mainbody">
+      <origin
+        xyz="0 0 -0.07"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.33 0.3 0.18"/>
+      </geometry>
+    </collision>
+    <collision name="left">
+      <origin
+        xyz="0 0.2 -0.035"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.2 0.1"/>
+      </geometry>
+    </collision>
+    <collision name="right">
+      <origin
+        xyz="0 -0.2 -0.035"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.2 0.2 0.1"/>
+      </geometry>
+    </collision>
+    <collision name="back">
+      <origin
+        xyz="-0.23 0 -0.05"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    <collision name="front">
+      <origin
+        xyz="0.23 0 -0.05"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
       </geometry>
     </collision>
   </link>
@@ -58,10 +109,15 @@
     <axis xyz="0 0 0" />
   </joint>
   <link name="FL_hip">
-    <inertial>
+    <!--inertial>
       <origin xyz="-0.0054 0.00194 -0.000105" rpy="0 0 0" />
       <mass value="0.678" />
       <inertia ixx="0.00048" ixy="-3.01E-06" ixz="1.11E-06" iyy="0.000884" iyz="-1.42E-06" izz="0.000596" />
+    </inertial-->
+    <inertial>
+      <origin xyz="-0.0054 0.00194 -0.000105" rpy="0 0 0" />
+      <mass value="1.069" />
+      <inertia ixx="0.001411" ixy="2.430E-5" ixz="9.880E-7" iyy="0.002318" iyz="-1.841E-6" izz="0.001739" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -81,7 +137,7 @@
     <parent link="base" />
     <child link="FL_hip" />
     <axis xyz="1 0 0" />
-    <limit lower="-1.0472" upper="1.0472" effort="23.7" velocity="30.1" />
+    <limit lower="-1.00" upper="0.50" effort="23.7" velocity="30.1" />
   </joint>
   <link name="FL_hip_rotor">
     <inertial>
@@ -96,10 +152,15 @@
     <child link="FL_hip_rotor" />
   </joint>
   <link name="FL_thigh">
-    <inertial>
+    <!--inertial>
       <origin xyz="-0.00374 -0.0223 -0.0327" rpy="0 0 0" />
       <mass value="1.152" />
       <inertia ixx="0.00584" ixy="8.72E-05" ixz="-0.000289" iyy="0.0058" iyz="0.000808" izz="0.00103" />
+    </inertial-->
+    <inertial>
+      <origin xyz="-0.00374 -0.0223 -0.0327" rpy="0 0 0" />
+      <mass value="1.257" />
+      <inertia ixx="0.003870" ixy="1.630E-5" ixz="-0.000153" iyy="0.004242" iyz="-0.000285" izz="0.001577" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -119,7 +180,8 @@
     <parent link="FL_hip" />
     <child link="FL_thigh" />
     <axis xyz="0 1 0" />
-    <limit lower="-1.5708" upper="3.4907" effort="23.7" velocity="30.1" />
+    <!--limit lower="-1.5708" upper="3.4907" effort="23.7" velocity="30.1" /-->
+    <limit lower="-3.2" upper="3.2" effort="23.7" velocity="30.1" />
   </joint>
   <link name="FL_thigh_rotor">
     <inertial>
@@ -134,10 +196,15 @@
     <child link="FL_thigh_rotor" />
   </joint>
   <link name="FL_calf">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.00548 -0.000975 -0.115" rpy="0 0 0" />
       <mass value="0.154" />
       <inertia ixx="0.00108" ixy="3.4E-07" ixz="1.72E-05" iyy="0.0011" iyz="8.28E-06" izz="3.29E-05" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.00548 -0.000975 -0.115" rpy="0 0 0" />
+      <mass value="0.195" />
+      <inertia ixx="0.000857" ixy="-3.400E-7" ixz="0.000208" iyy="0.000916" iyz="-2.754E-6" izz="7.237E-5" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -157,7 +224,8 @@
     <parent link="FL_thigh" />
     <child link="FL_calf" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7227" upper="-0.83776" effort="45.43" velocity="15.70" />
+    <!--limit lower="-2.7227" upper="2.75" effort="45.43" velocity="15.70" /-->
+    <limit lower="-3.2" upper="3.2" effort="45.43" velocity="15.70" />
   </joint>
   <link name="FL_calflower">
     <collision>
@@ -225,10 +293,15 @@
     <axis xyz="0 0 0" />
   </joint>
   <link name="FR_hip">
-    <inertial>
+    <!--inertial>
       <origin xyz="-0.0054 -0.00194 -0.000105" rpy="0 0 0" />
       <mass value="0.678" />
       <inertia ixx="0.00048" ixy="3.01E-06" ixz="1.11E-06" iyy="0.000884" iyz="1.42E-06" izz="0.000596" />
+    </inertial-->
+    <inertial>
+      <origin xyz="-0.0054 -0.00194 -0.000105" rpy="0 0 0" />
+      <mass value="1.069" />
+      <inertia ixx="0.001411" ixy="-2.441E-5" ixz="9.740E-7" iyy="0.002318" iyz="1.841E-6" izz="0.001739" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="3.1415 0 0" />
@@ -248,7 +321,7 @@
     <parent link="base" />
     <child link="FR_hip" />
     <axis xyz="1 0 0" />
-    <limit lower="-1.0472" upper="1.0472" effort="23.7" velocity="30.1" />
+    <limit lower="-0.50" upper="1.00" effort="23.7" velocity="30.1" />
   </joint>
   <link name="FR_hip_rotor">
     <inertial>
@@ -263,10 +336,15 @@
     <child link="FR_hip_rotor" />
   </joint>
   <link name="FR_thigh">
-    <inertial>
+    <!--inertial>
       <origin xyz="-0.00374 0.0223 -0.0327" rpy="0 0 0" />
       <mass value="1.152" />
       <inertia ixx="0.00584" ixy="-8.72E-05" ixz="-0.000289" iyy="0.0058" iyz="-0.000808" izz="0.00103" />
+    </inertial-->
+    <inertial>
+      <origin xyz="-0.00374 0.0223 -0.0327" rpy="0 0 0" />
+      <mass value="1.257" />
+      <inertia ixx="0.003781" ixy="-1.796E-5" ixz="-0.000155" iyy="0.004239" iyz="0.000283" izz="0.001664" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -286,7 +364,8 @@
     <parent link="FR_hip" />
     <child link="FR_thigh" />
     <axis xyz="0 1 0" />
-    <limit lower="-1.5708" upper="3.4907" effort="23.7" velocity="30.1" />
+    <!--limit lower="-1.5708" upper="3.4907" effort="23.7" velocity="30.1" /-->
+    <limit lower="-3.2" upper="3.2" effort="23.7" velocity="30.1" />
   </joint>
   <link name="FR_thigh_rotor">
     <inertial>
@@ -301,10 +380,15 @@
     <child link="FR_thigh_rotor" />
   </joint>
   <link name="FR_calf">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.00548 0.000975 -0.115" rpy="0 0 0" />
       <mass value="0.154" />
       <inertia ixx="0.00108" ixy="-3.4E-07" ixz="1.72E-05" iyy="0.0011" iyz="-8.28E-06" izz="3.29E-05" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.00548 0.000975 -0.115" rpy="0 0 0" />
+      <mass value="0.195" />
+      <inertia ixx="0.000857" ixy="3.400E-7" ixz="0.000208" iyy="0.000916" iyz="2.754E-6" izz="7.237E-5" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -324,7 +408,8 @@
     <parent link="FR_thigh" />
     <child link="FR_calf" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7227" upper="-0.83776" effort="45.43" velocity="15.70" />
+    <!--limit lower="-2.7227" upper="2.75" effort="45.43" velocity="15.70" /-->
+    <limit lower="-3.2" upper="3.2" effort="45.43" velocity="15.70" />
   </joint>
   <link name="FR_calflower">
     <collision>
@@ -392,10 +477,15 @@
     <axis xyz="0 0 0" />
   </joint>
   <link name="RL_hip">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.0054 0.00194 -0.000105" rpy="0 0 0" />
       <mass value="0.678" />
       <inertia ixx="0.00048" ixy="3.01E-06" ixz="-1.11E-06" iyy="0.000884" iyz="-1.42E-06" izz="0.000596" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.0054 0.00194 -0.000105" rpy="0 0 0" />
+      <mass value="1.069477" />
+      <inertia ixx="0.001411" ixy="-2.441E-5" ixz="-9.740E-7" iyy="0.002318" iyz="-1.841E-6" izz="0.001739" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 3.1415 0" />
@@ -415,7 +505,7 @@
     <parent link="base" />
     <child link="RL_hip" />
     <axis xyz="1 0 0" />
-    <limit lower="-1.0472" upper="1.0472" effort="23.7" velocity="30.1" />
+    <limit lower="-1.00" upper="0.50" effort="23.7" velocity="30.1" />
   </joint>
   <link name="RL_hip_rotor">
     <inertial>
@@ -430,10 +520,15 @@
     <child link="RL_hip_rotor" />
   </joint>
   <link name="RL_thigh">
-    <inertial>
+    <!--inertial>
       <origin xyz="-0.00374 -0.0223 -0.0327" rpy="0 0 0" />
       <mass value="1.152" />
       <inertia ixx="0.00584" ixy="8.72E-05" ixz="-0.000289" iyy="0.0058" iyz="0.000808" izz="0.00103" />
+    </inertial-->
+    <inertial>
+      <origin xyz="-0.00374 -0.0223 -0.0327" rpy="0 0 0" />
+      <mass value="1.256985" />
+      <inertia ixx="0.003781" ixy="-1.796E-5" ixz="0.000155" iyy="0.004239" iyz="-0.000283" izz="0.001664" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -453,7 +548,8 @@
     <parent link="RL_hip" />
     <child link="RL_thigh" />
     <axis xyz="0 1 0" />
-    <limit lower="-0.5236" upper="4.5379" effort="23.7" velocity="30.1" />
+    <!--limit lower="-3.4907" upper="1.5708" effort="23.7" velocity="30.1" /-->
+    <limit lower="-3.2" upper="3.2" effort="23.7" velocity="30.1" />
   </joint>
   <link name="RL_thigh_rotor">
     <inertial>
@@ -468,10 +564,15 @@
     <child link="RL_thigh_rotor" />
   </joint>
   <link name="RL_calf">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.00548 -0.000975 -0.115" rpy="0 0 0" />
       <mass value="0.154" />
       <inertia ixx="0.00108" ixy="3.4E-07" ixz="1.72E-05" iyy="0.0011" iyz="8.28E-06" izz="3.29E-05" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.00548 -0.000975 -0.115" rpy="0 0 0" />
+      <mass value="0.194642" />
+      <inertia ixx="0.000857" ixy="3.402E-7" ixz="-0.000208" iyy="0.000916" iyz="-2.754E-6" izz="7.237E-5" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -491,7 +592,8 @@
     <parent link="RL_thigh" />
     <child link="RL_calf" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7227" upper="-0.83776" effort="45.43" velocity="15.70" />
+    <!--limit lower="-2.7227" upper="2.75" effort="45.43" velocity="15.70" /-->
+    <limit lower="-3.2" upper="3.2" effort="45.43" velocity="15.70" />
   </joint>
   <link name="RL_calflower">
     <collision>
@@ -559,10 +661,15 @@
     <axis xyz="0 0 0" />
   </joint>
   <link name="RR_hip">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.0054 -0.00194 -0.000105" rpy="0 0 0" />
       <mass value="0.678" />
       <inertia ixx="0.00048" ixy="-3.01E-06" ixz="-1.11E-06" iyy="0.000884" iyz="1.42E-06" izz="0.000596" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.0054 -0.00194 -0.000105" rpy="0 0 0" />
+      <mass value="1.069477" />
+      <inertia ixx="0.001411" ixy="2.430E-5" ixz="-9.876E-7" iyy="0.002318" iyz="1.841E-6" izz="0.001739" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="3.1415 3.1415 0" />
@@ -582,7 +689,7 @@
     <parent link="base" />
     <child link="RR_hip" />
     <axis xyz="1 0 0" />
-    <limit lower="-1.0472" upper="1.0472" effort="23.7" velocity="30.1" />
+    <limit lower="-0.50" upper="1.00" effort="23.7" velocity="30.1" />
   </joint>
   <link name="RR_hip_rotor">
     <inertial>
@@ -597,10 +704,15 @@
     <child link="RR_hip_rotor" />
   </joint>
   <link name="RR_thigh">
-    <inertial>
+    <!--inertial>
       <origin xyz="-0.00374 0.0223 -0.0327" rpy="0 0 0" />
       <mass value="1.152" />
       <inertia ixx="0.00584" ixy="-8.72E-05" ixz="-0.000289" iyy="0.0058" iyz="-0.000808" izz="0.00103" />
+    </inertial-->
+    <inertial>
+      <origin xyz="-0.00374 0.0223 -0.0327" rpy="0 0 0" />
+      <mass value="1.256985" />
+      <inertia ixx="0.003870" ixy="1.630E-5" ixz="0.000153" iyy="0.004242" iyz="0.000285" izz="0.001577" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -620,7 +732,8 @@
     <parent link="RR_hip" />
     <child link="RR_thigh" />
     <axis xyz="0 1 0" />
-    <limit lower="-0.5236" upper="4.5379" effort="23.7" velocity="30.1" />
+    <!--limit lower="-3.4907" upper="1.5708" effort="23.7" velocity="30.1" /-->
+    <limit lower="-3.2" upper="3.2" effort="23.7" velocity="30.1" />
   </joint>
   <link name="RR_thigh_rotor">
     <inertial>
@@ -635,10 +748,15 @@
     <child link="RR_thigh_rotor" />
   </joint>
   <link name="RR_calf">
-    <inertial>
+    <!--inertial>
       <origin xyz="0.00548 0.000975 -0.115" rpy="0 0 0" />
       <mass value="0.154" />
       <inertia ixx="0.00108" ixy="-3.4E-07" ixz="1.72E-05" iyy="0.0011" iyz="-8.28E-06" izz="3.29E-05" />
+    </inertial-->
+    <inertial>
+      <origin xyz="0.00548 0.000975 -0.115" rpy="0 0 0" />
+      <mass value="0.194642" />
+      <inertia ixx="0.000857" ixy="-3.402E-7" ixz="-0.000208" iyy="0.000916" iyz="2.754E-6" izz="7.237E-5" />
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -658,7 +776,8 @@
     <parent link="RR_thigh" />
     <child link="RR_calf" />
     <axis xyz="0 1 0" />
-    <limit lower="-2.7227" upper="-0.83776" effort="45.43" velocity="15.70" />
+    <!--limit lower="-2.7227" upper="2.75" effort="45.43" velocity="15.70" /-->
+    <limit lower="-3.2" upper="3.2" effort="45.43" velocity="15.70" />
   </joint>
   <link name="RR_calflower">
     <collision>
@@ -758,4 +877,436 @@
   </joint>
   <link name="front_camera">
   </link>
+  <link
+    name="left_arm1">
+    <inertial>
+      <origin
+        xyz="0.000004 0.004168 0.033215"
+        rpy="0 0 0" />
+      <mass
+        value="0.515038" />
+      <inertia
+        ixx="0.000328"
+        ixy="-1.547E-8"
+        ixz="3.297E-7"
+        iyy="0.000243"
+        iyz="-1.438E-5"
+        izz="0.000297" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/left_arm1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <!--collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/left_arm1.STL" />
+      </geometry>
+    </collision-->
+  </link>
+  <!--joint
+    name="left_arm_j1"
+    type="revolute">
+    <origin
+      xyz="0.29825 -0.085 0.025"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="base" />
+    <child
+      link="left_arm1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="75"
+      velocity="58.5" />
+  </joint-->
+  <joint
+    name="left_arm_j1"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="0.1 -0.085 0.05"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="base" />
+    <child
+      link="left_arm1" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_arm2">
+    <inertial>
+      <origin
+        xyz="-0.119400 0.000098 0.013073"
+        rpy="0 0 0" />
+      <mass
+        value="0.266875" />
+      <inertia
+        ixx="0.000074"
+        ixy="1.000E-10"
+        ixz="1.000E-10"
+        iyy="0.002702"
+        iyz="1.031E-7"
+        izz="0.002741" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/left_arm2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <!--collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/left_arm2.STL" />
+      </geometry>
+    </collision-->
+  </link>
+  <!--joint
+    name="left_arm_j2"
+    type="revolute">
+    <origin
+      xyz="0 0.038 0.036"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="left_arm1" />
+    <child
+      link="left_arm2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="3"
+      effort="75"
+      velocity="58.5" />
+  </joint-->
+  <joint
+    name="left_arm_j2"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="0 0.038 0.036"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="left_arm1" />
+    <child
+      link="left_arm2" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_arm3">
+    <inertial>
+      <origin
+        xyz="0.148986 0.047869 -0.006891"
+        rpy="0 0 0" />
+      <mass
+        value="2.186092" />
+      <inertia
+        ixx="0.007971"
+        ixy="0.006065"
+        ixz="-0.005778"
+        iyy="0.025569"
+        iyz="-0.001861"
+        izz="0.022958" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/left_arm3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <!--collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/left_arm3.STL" />
+      </geometry>
+    </collision-->
+  </link>
+  <!--joint
+    name="left_arm_j3"
+    type="revolute">
+    <origin
+      xyz="-0.2388 0 -0.009"
+      rpy="3.1416 0 0" />
+    <parent
+      link="left_arm2" />
+    <child
+      link="left_arm3" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="75"
+      velocity="58.5" />
+  </joint-->
+  <joint
+    name="left_arm_j3"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="-0.2388 0 -0.009"
+      rpy="3.1416 0 0" />
+    <parent
+      link="left_arm2" />
+    <child
+      link="left_arm3" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_arm1">
+    <inertial>
+      <origin
+        xyz="-0.000004 -0.004168 0.033215"
+        rpy="0 0 0" />
+      <mass
+        value="0.515038" />
+      <inertia
+        ixx="0.000328"
+        ixy="-1.547E-8"
+        ixz="-3.297E-7"
+        iyy="0.000243"
+        iyz="1.438E-5"
+        izz="0.000297" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/right_arm1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <!--collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/right_arm1.STL" />
+      </geometry>
+    </collision-->
+  </link>
+  <!--joint
+    name="right_arm_j1"
+    type="revolute">
+    <origin
+      xyz="0.078254 -0.085 0.025"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="base" />
+    <child
+      link="right_arm1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="75"
+      velocity="58.5" />
+  </joint-->
+  <joint
+    name="right_arm_j1"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="-0.1 -0.085 0.05"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="base" />
+    <child
+      link="right_arm1" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_arm2">
+    <inertial>
+      <origin
+        xyz="-0.119400 -0.000098 0.013073"
+        rpy="0 0 0" />
+      <mass
+        value="0.266875" />
+      <inertia
+        ixx="0.000074"
+        ixy="1.000E-10"
+        ixz="1.000E-10"
+        iyy="0.002702"
+        iyz="-1.031E-7"
+        izz="0.002741" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/right_arm2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <!--collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/right_arm2.STL" />
+      </geometry>
+    </collision-->
+  </link>
+  <!--joint
+    name="right_arm_j2"
+    type="revolute">
+    <origin
+      xyz="0 -0.038 0.036"
+      rpy="1.5708 0 0" />
+    <parent
+      link="right_arm1" />
+    <child
+      link="right_arm2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="3"
+      effort="75"
+      velocity="58.5" />
+  </joint-->
+  <joint
+    name="right_arm_j2"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="0 -0.038 0.036"
+      rpy="1.5708 0 0" />
+    <parent
+      link="right_arm1" />
+    <child
+      link="right_arm2" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_arm3">
+    <inertial>
+      <origin
+        xyz="0.149378 -0.047869 -0.006894"
+        rpy="0 0 0" />
+      <mass
+        value="2.186092" />
+      <inertia
+        ixx="0.007982"
+        ixy="-0.005921"
+        ixz="-0.005863"
+        iyy="0.025686"
+        iyz="0.001857"
+        izz="0.023088" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/right_arm3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <!--collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/right_arm3.STL" />
+      </geometry>
+    </collision-->
+  </link>
+  <!--joint
+    name="right_arm_j3"
+    type="revolute">
+    <origin
+      xyz="-0.2388 0 -0.009"
+      rpy="-3.1416 0 0" />
+    <parent
+      link="right_arm2" />
+    <child
+      link="right_arm3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="75"
+      velocity="58.5" />
+  </joint-->
+  <joint
+    name="right_arm_j3"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="-0.2388 0 -0.009"
+      rpy="-3.1416 0 0" />
+    <parent
+      link="right_arm2" />
+    <child
+      link="right_arm3" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
 </robot>

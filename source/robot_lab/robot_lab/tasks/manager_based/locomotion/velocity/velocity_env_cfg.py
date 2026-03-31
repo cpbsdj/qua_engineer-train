@@ -122,7 +122,7 @@ class ActionsCfg:
     """Action specifications for the MDP."""
 
     joint_pos = mdp.JointPositionActionCfg(
-        asset_name="robot", joint_names=[".*"], scale=0.5, use_default_offset=True, clip=None, preserve_order=True
+        asset_name="robot", joint_names=[".*_joint"], scale=0.5, use_default_offset=True, clip=None, preserve_order=True
     )
 
 
@@ -161,14 +161,14 @@ class ObservationsCfg:
         )
         joint_pos = ObsTerm(
             func=mdp.joint_pos_rel,
-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint", preserve_order=True)},
             noise=Unoise(n_min=-0.01, n_max=0.01),
             clip=(-100.0, 100.0),
             scale=1.0,
         )
         joint_vel = ObsTerm(
             func=mdp.joint_vel_rel,
-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint", preserve_order=True)},
             noise=Unoise(n_min=-1.5, n_max=1.5),
             clip=(-100.0, 100.0),
             scale=1.0,
@@ -218,13 +218,13 @@ class ObservationsCfg:
         )
         joint_pos = ObsTerm(
             func=mdp.joint_pos_rel,
-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint", preserve_order=True)},
             clip=(-100.0, 100.0),
             scale=1.0,
         )
         joint_vel = ObsTerm(
             func=mdp.joint_vel_rel,
-            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*", preserve_order=True)},
+            params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint", preserve_order=True)},
             clip=(-100.0, 100.0),
             scale=1.0,
         )
@@ -399,13 +399,13 @@ class RewardsCfg:
 
     # Joint penalties
     joint_torques_l2 = RewTerm(
-        func=mdp.joint_torques_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+        func=mdp.joint_torques_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint")}
     )
     joint_vel_l2 = RewTerm(
-        func=mdp.joint_vel_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+        func=mdp.joint_vel_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint")}
     )
     joint_acc_l2 = RewTerm(
-        func=mdp.joint_acc_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+        func=mdp.joint_acc_l2, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint")}
     )
 
     def create_joint_deviation_l1_rewterm(self, attr_name, weight, joint_names_pattern):
@@ -417,18 +417,18 @@ class RewardsCfg:
         setattr(self, attr_name, rew_term)
 
     joint_pos_limits = RewTerm(
-        func=mdp.joint_pos_limits, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*")}
+        func=mdp.joint_pos_limits, weight=0.0, params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint")}
     )
     joint_vel_limits = RewTerm(
         func=mdp.joint_vel_limits,
         weight=0.0,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*"), "soft_ratio": 1.0},
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint"), "soft_ratio": 1.0},
     )
     joint_power = RewTerm(
         func=mdp.joint_power,
         weight=0.0,
         params={
-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
+            "asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint"),
         },
     )
 
@@ -438,7 +438,7 @@ class RewardsCfg:
         params={
             "command_name": "base_velocity",
             "command_threshold": 0.1,
-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
+            "asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint"),
         },
     )
 
@@ -447,7 +447,7 @@ class RewardsCfg:
         weight=0.0,
         params={
             "command_name": "base_velocity",
-            "asset_cfg": SceneEntityCfg("robot", joint_names=".*"),
+            "asset_cfg": SceneEntityCfg("robot", joint_names=".*_joint"),
             "stand_still_scale": 5.0,
             "velocity_threshold": 0.5,
             "command_threshold": 0.1,

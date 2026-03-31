@@ -114,12 +114,12 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         env_cfg.scene.terrain.terrain_generator.curriculum = False
 
     # disable randomization for play
-    env_cfg.observations.policy.enable_corruption = False
+    env_cfg.observations.policy.enable_corruption = True
     # remove random pushing
-    env_cfg.events.randomize_apply_external_force_torque = None
-    env_cfg.events.push_robot = None
-    env_cfg.curriculum.command_levels_lin_vel = None
-    env_cfg.curriculum.command_levels_ang_vel = None
+    # env_cfg.events.randomize_apply_external_force_torque = None
+    # env_cfg.events.push_robot = None
+    # env_cfg.curriculum.command_levels_lin_vel = None
+    # env_cfg.curriculum.command_levels_ang_vel = None
 
     if args_cli.keyboard:
         env_cfg.scene.num_envs = 1
@@ -216,6 +216,19 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     # reset environment
     obs = env.get_observations()
     timestep = 0
+
+
+
+    robot = env.unwrapped.scene["robot"]
+    joint_names = robot.data.joint_names
+    target_indices = [i for i, n in enumerate(joint_names) 
+                    if any(x in n for x in ["hip", "thigh", "calf"])]
+    print(f"[INFO] 监控关节: {[joint_names[i] for i in target_indices]}")
+    step_count = 0
+    num_envs = env_cfg.scene.num_envs
+    joint_acc_l2_avr = 0.0
+    joint_pos_limits_avr = 0.0
+
     # simulate environment
     while simulation_app.is_running():
         start_time = time.time()
@@ -225,6 +238,44 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
             actions = policy(obs)
             # env stepping
             obs, _, dones, _ = env.step(actions)
+
+
+            joint_acc_l2 = 0
+            joint_pos_limits = 0
+            if num_envs == 1:
+                print(f"\n[Step {step_count}]")
+                for idx in target_indices:
+                    name = joint_names[idx]
+                    pos = robot.data.joint_pos[0, idx].item()
+                    vel = robot.data.joint_vel[0, idx].item()
+                    acc = robot.data.joint_acc[0, idx].item()
+                    torque = robot.data.applied_torque[0, idx].item()
+                    soft_limits = robot.data.soft_joint_pos_limits[0, idx]  # [soft_lower, soft_upper]
+                    is_violated = not (soft_limits[0] <= pos <= soft_limits[1])
+
+                    print(f"{name}: pos={pos:.3f}, vel={vel:.3f}, acc={acc:.3f}, torque={torque:.3f}, "
+                        f"soft_limit=[{soft_limits[0]:.3f}, {soft_limits[1]:.3f}], violated={is_violated}")
+                    joint_acc_l2 += acc ** 2
+                    joint_pos_limits += is_violated
+
+                print(f"Current Joint Acc L2 Norm (weight = 2.5e-7): {2.5e-7*joint_acc_l2:.3f}")
+                joint_acc_l2_avr = (joint_acc_l2_avr * step_count + joint_acc_l2) / (step_count + 1)
+                print(f"Average Joint Acc L2 Norm (weight = 2.5e-7): {2.5e-7*joint_acc_l2_avr:.3f}")
+
+                print(f"Current Joint Pos Limits Violations(weight = 5.0): {5.0*joint_pos_limits:.3f}")
+                joint_pos_limits_avr = (joint_pos_limits_avr * step_count + joint_pos_limits) / (step_count + 1)
+                print(f"Average Joint Pos Limits Violations(weight = 5.0): {5.0*joint_pos_limits_avr:.3f}")
+
+                rewards_dict = env.unwrapped.reward_manager._episode_sums
+                print(f"Env computed joint_acc_l2 sum: {rewards_dict['joint_acc_l2'][0]}")
+
+                step_count += 1
+                if step_count == 50:
+                    step_count = 0
+                    joint_acc_l2_avr = 0.0
+                    joint_pos_limits_avr = 0.0
+
+
             # reset recurrent states for episodes that have terminated
             policy_nn.reset(dones)
         if args_cli.video:

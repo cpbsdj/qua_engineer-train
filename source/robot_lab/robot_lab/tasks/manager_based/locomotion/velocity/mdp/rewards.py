@@ -678,3 +678,26 @@ def flat_orientation_l2(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = Scen
     reward = torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
     reward *= torch.clamp(-env.scene["robot"].data.projected_gravity_b[:, 2], 0, 0.7) / 0.7
     return reward
+
+
+def base_height_exp(
+    env: ManagerBasedRLEnv,
+    target_height: float,
+    std: float,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+    sensor_cfg: SceneEntityCfg | None = None,
+) -> torch.Tensor:
+    """Reward base height close to target using exponential kernel."""
+    asset: RigidObject = env.scene[asset_cfg.name]
+    
+    if sensor_cfg is not None:
+        sensor: RayCaster = env.scene[sensor_cfg.name]
+        adjusted_target_height = target_height + torch.mean(sensor.data.ray_hits_w[..., 2], dim=1)
+    else:
+        adjusted_target_height = target_height
+    
+    # 计算高度误差
+    height_error = torch.square(asset.data.root_pos_w[:, 2] - adjusted_target_height)
+    
+    # exp 形式奖励：误差越小，奖励越接近 1
+    return torch.exp(-height_error / std**2)

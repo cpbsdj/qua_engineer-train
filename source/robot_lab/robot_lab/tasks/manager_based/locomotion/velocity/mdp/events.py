@@ -8,12 +8,13 @@ from typing import TYPE_CHECKING, Literal
 
 import isaaclab.utils.math as math_utils
 from isaaclab.assets import Articulation, RigidObject
-from isaaclab.managers import SceneEntityCfg
+from isaaclab.managers import  ManagerTermBase, EventTermCfg, SceneEntityCfg
+from isaaclab.utils.math import sample_uniform
 
 from .utils import is_env_assigned_to_terrain
 
 if TYPE_CHECKING:
-    from isaaclab.envs import ManagerBasedEnv
+    from isaaclab.envs import ManagerBasedEnv, ManagerBasedRLEnv
 
 
 def randomize_rigid_body_inertia(
@@ -267,3 +268,120 @@ def reset_root_state_uniform(
         # set into the physics simulation
         asset.write_root_pose_to_sim(torch.cat([positions, orientations], dim=-1), env_ids=non_pit_env_ids)
         asset.write_root_velocity_to_sim(velocities, env_ids=non_pit_env_ids)
+
+
+
+
+
+
+
+
+
+
+
+def reset_arm_joints_random(
+    env: ManagerBasedEnv,
+    env_ids: torch.Tensor,
+    asset_cfg: SceneEntityCfg,
+    position_range: tuple[float, float] = (-3.14, 3.14),
+    velocity_range: tuple[float, float] = (0.0, 0.0),
+):
+    """在关节限制范围内随机重置机械臂关节位置（reset类型）
+    
+    该函数用于episode开始时随机化机械臂各关节的位置。与reset_joints_by_offset不同，
+    它直接在关节限制的绝对范围内采样，而不是基于默认位置的偏移。
+    
+    Args:
+        env: 环境实例
+        env_ids: 需要重置的环境ID
+        position_range: 关节位置采样范围 (min, max)，单位弧度。默认(-3.14, 3.14)
+        velocity_range: 关节速度采样范围 (min, max)，单位rad/s。默认(0.0, 0.0)表示静止
+        asset_cfg: 资产配置，通过joint_ids指定要随机化的机械臂关节
+    """
+    # 提取资产
+    asset: Articulation = env.scene[asset_cfg.name]
+    
+    # 处理env_ids广播
+    if asset_cfg.joint_ids != slice(None):
+        iter_env_ids = env_ids[:, None]
+    else:
+        iter_env_ids = env_ids
+    
+    # 获取指定关节的位置限制
+    joint_pos_limits = asset.data.soft_joint_pos_limits[iter_env_ids, asset_cfg.joint_ids]
+    joint_min_pos = joint_pos_limits[..., 0]
+    joint_max_pos = joint_pos_limits[..., 1]
+    
+    # 将用户指定的position_range与关节实际限制取交集，避免超出物理限制
+    clamped_min = torch.clamp(
+        torch.full_like(joint_min_pos, position_range[0]), 
+        min=joint_min_pos, 
+        max=joint_max_pos
+    )
+    clamped_max = torch.clamp(
+        torch.full_like(joint_max_pos, position_range[1]), 
+        min=joint_min_pos, 
+        max=joint_max_pos
+    )
+    
+    # 在限制范围内均匀采样关节位置
+    joint_pos = sample_uniform(clamped_min, clamped_max, clamped_min.shape, asset.device)
+    
+    # 采样关节速度（默认0，即静止开始）
+    joint_vel_limits = asset.data.soft_joint_vel_limits[iter_env_ids, asset_cfg.joint_ids]
+    joint_vel_min = torch.clamp(
+        torch.full_like(joint_vel_limits, velocity_range[0]), 
+        min=-joint_vel_limits, 
+        max=joint_vel_limits
+    )
+    joint_vel_max = torch.clamp(
+        torch.full_like(joint_vel_limits, velocity_range[1]), 
+        min=-joint_vel_limits, 
+        max=joint_vel_limits
+    )
+    joint_vel = sample_uniform(joint_vel_min, joint_vel_max, joint_vel_min.shape, asset.device)
+    
+    # 写入仿真（直接设置物理状态）
+    asset.write_joint_state_to_sim(joint_pos, joint_vel, joint_ids=asset_cfg.joint_ids, env_ids=env_ids)
+
+
+
+
+def randomize_arm_joint_targets(
+    env: ManagerBasedEnv,
+    env_ids: torch.Tensor | None,
+    asset_cfg: SceneEntityCfg,
+    position_range: tuple[float, float] = (-0.5, 0.5),
+):
+    """在episode过程中随机设置机械臂关节目标角度（interval类型）
+    
+    使用方式：在EventTermCfg中设置mode="interval"
+    """
+    # 获取资产
+    asset: Articulation = env.scene[asset_cfg.name]
+    
+    # 解析环境ID
+    if env_ids is None:
+        env_ids = torch.arange(env.scene.num_envs, device=asset.device)
+    
+    # 处理广播
+    if asset_cfg.joint_ids != slice(None):
+        iter_env_ids = env_ids[:, None]
+    else:
+        iter_env_ids = env_ids
+    
+    # 获取默认位置并添加随机偏移
+    default_pos = asset.data.default_joint_pos[iter_env_ids, asset_cfg.joint_ids]
+    offset_min = torch.full_like(default_pos, position_range[0])
+    offset_max = torch.full_like(default_pos, position_range[1])
+    offset = sample_uniform(offset_min, offset_max, offset_min.shape, asset.device)
+    
+    # 计算目标位置
+    target_pos = default_pos + offset
+    
+    # 限制在关节限制范围内
+    joint_limits = asset.data.soft_joint_pos_limits[iter_env_ids, asset_cfg.joint_ids]
+    target_pos = torch.clamp(target_pos, min=joint_limits[..., 0], max=joint_limits[..., 1])
+    
+    # 设置关节目标
+    asset.set_joint_position_target(target_pos, joint_ids=asset_cfg.joint_ids, env_ids=env_ids)
